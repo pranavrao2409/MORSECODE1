@@ -1,0 +1,89 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+
+public class MorseCodeConverterGUI extends JFrame {
+    private JTextArea inputTextArea;
+    private JTextArea outputTextArea;
+    private JButton convertButton;
+    private JButton clearButton;
+
+    private static final Map<Character, String> morseCodeMap = new HashMap<>();
+
+    static {
+        morseCodeMap.put('A', ".-");
+        morseCodeMap.put('B', "-...");
+        // ... (add more mappings)
+    }
+
+    public MorseCodeConverterGUI() {
+        setTitle("English to Morse Code Converter");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        initComponents();
+        addComponents();
+        pack();
+        setLocationRelativeTo(null); // Center the frame on screen
+        setVisible(true);
+    }
+
+    private void initComponents() {
+        inputTextArea = new JTextArea(10, 40);
+        outputTextArea = new JTextArea(10, 40);
+        outputTextArea.setEditable(false);
+        convertButton = new JButton("Convert");
+        clearButton = new JButton("Clear");
+
+        convertButton.addActionListener(new ConvertButtonListener());
+        clearButton.addActionListener(new ClearButtonListener());
+    }
+
+    private void addComponents() {
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBorder(BorderFactory.createTitledBorder("Enter English Text"));
+        inputPanel.add(new JScrollPane(inputTextArea), BorderLayout.CENTER);
+
+        JPanel outputPanel = new JPanel(new BorderLayout());
+        outputPanel.setBorder(BorderFactory.createTitledBorder("Morse Code"));
+        outputPanel.add(new JScrollPane(outputTextArea), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(convertButton);
+        buttonPanel.add(clearButton);
+
+        add(inputPanel, BorderLayout.NORTH);
+        add(outputPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private class ConvertButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String inputText = inputTextArea.getText().toUpperCase();
+            StringBuilder morseCodeBuilder = new StringBuilder();
+
+            for (char c : inputText.toCharArray()) {
+                if (morseCodeMap.containsKey(c)) {
+                    morseCodeBuilder.append(morseCodeMap.get(c)).append(" ");
+                } else if (c == ' ') {
+                    morseCodeBuilder.append(" / ");
+                }
+            }
+
+            outputTextArea.setText(morseCodeBuilder.toString());
+        }
+    }
+
+    private class ClearButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            inputTextArea.setText("");
+            outputTextArea.setText("");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MorseCodeConverterGUI());
+    }
+}
